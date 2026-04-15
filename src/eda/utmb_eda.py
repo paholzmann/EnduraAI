@@ -8,6 +8,7 @@ from ..data.file_handler import FileHandler
 from ..data.utmb_data import UTMBData, CleanUTMBData
 from ..feature_engineering.utmb_features import UTMBFeatures
 from ..logging.logger import Logger
+from src.pipeline.feature_pipeline import UTMBFeaturePipeline
 
 class UTMB_EDA:
     def __init__(self):
@@ -74,13 +75,14 @@ clean_utmb_data = CleanUTMBData()
 utmb_features = UTMBFeatures()
 utmb_df = utmb_data.load_processed_df()
 utmb_df = clean_utmb_data.remove_str_from_numeric_col(utmb_df=utmb_df)
-utmb_df = utmb_features.calculate_race_effort(utmb_df=utmb_df)
+utmb_df = UTMBFeaturePipeline().run_feature_pipeline(utmb_df=utmb_df)
 utmb_df = clean_utmb_data.parse_race_results(utmb_df=utmb_df)
+utmb_df.to_csv("training_data/utmb/processed/utmb-race-data-processed_v2.csv")
 print(utmb_df)
-utmb_eda = UTMB_EDA()
-utmb_eda.plot_race_category(utmb_df=utmb_df)
-utmb_eda.plot_boxplot(utmb_df=utmb_df, x="Distance", x_label="Distance", title="Distance-Distribution with outliers")
-utmb_eda.plot_boxplot(utmb_df=utmb_df, x="Elevation_Gain", x_label="Elevation gain", title="Elevation gain distribution with outliers")
-utmb_eda.plot_race_distance(utmb_df=utmb_df)
-utmb_eda.plot_distance_vs_elevation_gain(utmb_df=utmb_df)
-utmb_eda.plot_average_race_time_by_category(utmb_df=utmb_df)
+# utmb_eda = UTMB_EDA()
+# utmb_eda.plot_race_category(utmb_df=utmb_df)
+# utmb_eda.plot_boxplot(utmb_df=utmb_df, x="Distance", x_label="Distance", title="Distance-Distribution with outliers")
+# utmb_eda.plot_boxplot(utmb_df=utmb_df, x="Elevation_Gain", x_label="Elevation gain", title="Elevation gain distribution with outliers")
+# utmb_eda.plot_race_distance(utmb_df=utmb_df)
+# utmb_eda.plot_distance_vs_elevation_gain(utmb_df=utmb_df)
+# utmb_eda.plot_average_race_time_by_category(utmb_df=utmb_df)
