@@ -57,7 +57,7 @@ class Performance_Metrics:
 
     def calculate_estimated_pace_on_flat_equivalent(self, total_time: float, race_effort: float) -> float:
         """
-        
+        Estimated pace in minutes
         """
         self.logger.debug(f"Calculating estimated pace on flat equivalent for race effort {race_effort} with total time {total_time}")
         estimated_pace = total_time / race_effort
