@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.api.v1.routes.performance_metrics import performance_metrics_router
+from app.api.v1.routes.performance_projection import performance_projection_router
 
 app = FastAPI(title="UTMB API")
 
@@ -13,3 +14,4 @@ app.add_middleware(
 )
 
 app.include_router(performance_metrics_router)
+app.include_router(performance_projection_router)

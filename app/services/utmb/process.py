@@ -20,6 +20,12 @@ class ProcessUTMBData:
             utmb_df = pd.concat([utmb_df, expanded_df], axis=1)
             utmb_df = utmb_df.drop(columns=[col])
         return utmb_df
+    
+    def result_to_minutes(self, utmb_df: pd.DataFrame) -> pd.DataFrame:
+        self.logger.debug("Converting results in hours to minutes")
+        utmb_df = utmb_df.copy()
+        utmb_df["Results"] = utmb_df["Results"].apply(lambda results: [x * 60 for x in results])
+        return utmb_df
 
     def remove_str_from_numeric_col(self, utmb_df: pd.DataFrame, columns: list = ["Distance", "Elevation_Gain"]) -> pd.DataFrame:
         self.logger.debug(f"Removing strings from numeric columns: {columns}")
@@ -55,6 +61,7 @@ class ProcessUTMBData:
     def processing_pipeline(self, utmb_df: pd.DataFrame) -> None:
         self.logger.debug("Starting processing pipeline")
         utmb_df = self.clean_raw_df(utmb_df=utmb_df, columns_to_expand=["Age", "Sex"])
+        utmb_df = self.result_to_minutes(utmb_df=utmb_df)
         utmb_df = self.remove_str_from_numeric_col(utmb_df=utmb_df)
         utmb_df = self.drop_irrelevant_columns(utmb_df=utmb_df)
         utmb_df = self.parse_race_results(utmb_df=utmb_df)

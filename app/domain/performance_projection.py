@@ -6,6 +6,7 @@ from app.core.logger import Logger
 from app.core.utils.file_utils import FileUtils
 from app.services.utmb.process import ProcessUTMBData
 from app.domain.performance_metrics import Performance_Metrics
+from app.core.utils.dataframe_utils import DataFrameUtils
 
 class PerformanceProjection:
     def __init__(self):
@@ -31,9 +32,9 @@ class PerformanceProjection:
         """
         race_effort = self.performance_metrics.calculate_race_effort(distance=distance, elevation=elevation)
         pace_on_flat_equivalent = self.performance_metrics.calculate_estimated_pace_on_flat_equivalent(total_time=total_time, race_effort=race_effort)
-        # pace_on_flat_equivalent = pace_on_flat_equivalent
         fitting_races = self.effort_based_race_matching(utmb_df=utmb_df, distance=distance, elevation=elevation)
         fitting_races["Time_Based_On_Flat_Equivalent"] = fitting_races["Race_Effort"] * pace_on_flat_equivalent
+        fitting_races["Pace_on_flat_equivalent"] = pace_on_flat_equivalent
         def calculate_placement(row):
             results = row["Results"]
             if not isinstance(results, list) or len(results) == 0:
@@ -44,17 +45,6 @@ class PerformanceProjection:
         
         fitting_races["Possible_Placement"] = fitting_races.apply(calculate_placement, axis=1)
         return fitting_races
-        # def calculate_placement(results):
-        #     if not isinstance(results, list):
-        #         return np.nan
-        #     clean_results = [t for t in results if pd.notna(t) and t > 0]
-        #     if clean_results:
-        #         return np.nan
-        #     possible_placement = bisect.bisect_left(clean_results, total_time)
-        #     print(possible_placement)
-        # fitting_races["Results"].apply(calculate_placement)
-
-
 
     def best_race_opportunities(self):
         """
@@ -93,7 +83,8 @@ class PerformanceProjection:
         fitting_races = utmb_df[(utmb_df["Race_Effort"] > min_effort) & (utmb_df["Race_Effort"] < max_effort)]
         return fitting_races
 
-utmb_df = FileUtils().read_csv_as_df(csv_path="data/processed/utmb/utmb-race-data-features.csv")
-utmb_df = ProcessUTMBData().parse_race_results(utmb_df=utmb_df)
-fitting_races = PerformanceProjection().race_placement_projection(utmb_df=utmb_df, distance=85, elevation=3900, total_time=14.5)
-print(fitting_races[fitting_races["Race_Title"].str.contains("mozart", case=False)])
+# utmb_df = FileUtils().read_csv_as_df(csv_path="data/processed/utmb/utmb-race-data-features.csv")
+# utmb_df = ProcessUTMBData().parse_race_results(utmb_df=utmb_df)
+# fitting_races = PerformanceProjection().race_placement_projection(utmb_df=utmb_df, distance=85, elevation=3900, total_time=14.5)
+# res = DataFrameUtils().df_to_dict(df=fitting_races)
+# print(res)
