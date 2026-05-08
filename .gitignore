@@ -6,6 +6,8 @@ __pycache__/
 # C extensions
 *.so
 
+# Frontend test
+frontend_test/
 
 # Data
 data/
