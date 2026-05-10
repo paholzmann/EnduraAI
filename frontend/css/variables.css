@@ -17,6 +17,13 @@
     --color-accent-muted: rgba(139, 143, 151, 0.14);
     --color-accent-border: rgba(139, 143, 151, 0.28);
 
+    /* 
+    UTMB
+    */
+    --utmb-20k: #FFFF00;
+    --utmb-50k: #FC5A00;
+    --utmb-100k: #7DDF64;
+    --utmb-100m: #F42525;
     /* =========================
      2. Monochrome Color System
      ========================= */

@@ -60,3 +60,67 @@ body {
     letter-spacing: var(--letter-snug);
     line-height: var(--line-height-snug);
 }
+
+
+@media (max-width: 900px) {
+    .sidebar {
+        width: var(--sidebar-width-collapsed);
+    }
+
+    .brand-name,
+    .sidebar-card,
+    .nav-link {
+        font-size: 0;
+    }
+
+    .nav-link {
+        justify-content: center;
+        padding: 0;
+    }
+
+    .app-content {
+        margin-left: var(--sidebar-width-collapsed);
+    }
+
+    .section-header {
+        align-items: start;
+        flex-direction: column;
+    }
+
+    .dashboard-grid-2,
+    .dashboard-grid-3,
+    .dashboard-grid-4 {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 640px) {
+    .sidebar {
+        display: none;
+    }
+
+    .app-content {
+        margin-left: 0;
+    }
+
+    .topbar {
+        height: auto;
+        min-height: var(--navbar-height);
+        align-items: flex-start;
+        flex-direction: column;
+        padding-top: var(--space-4);
+        padding-bottom: var(--space-4);
+    }
+
+    .topbar-right {
+        width: 100%;
+    }
+
+    .button {
+        flex: 1;
+    }
+
+    .dashboard-main {
+        padding: var(--space-5) var(--space-4);
+    }
+}

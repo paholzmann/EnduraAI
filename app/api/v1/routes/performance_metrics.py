@@ -68,12 +68,24 @@ async def calculate_race_difficulty_score_endpoint(payload: CalculateRaceDifficu
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
     
 @performance_metrics_router.post("/race_category", response_model=CalculateRaceCategoryResponse, status_code=status.HTTP_200_OK, summary="Calculating race category")
-async def calculate_race_category_router(payload: CalculateRaceCategoryRequest) -> CalculateRaceCategoryResponse:
+async def calculate_race_category_endpoint(payload: CalculateRaceCategoryRequest) -> CalculateRaceCategoryResponse:
     """
         curl -X POST http://127.0.0.1:8000/api/v1/performance_metrics/race_category -H "Content-Type: application/json" -d "{\"distance\": 15.0, \"elevation\": 700}"
     """
     try:
         race_category = performance_metrics.calculate_race_category(distance=payload.distance, elevation=payload.elevation)
         return CalculateRaceCategoryResponse(result=race_category, message="Calculating race category successfull")
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+    
+
+@performance_metrics_router.post("/get_all", response_model=GetAllResponse, status_code=status.HTTP_200_OK, summary="Calculating all performance metrics")
+async def get_all_endpoint(payload: GetAllRequest) -> GetAllResponse:
+    """
+    curl -X POST http://127.0.0.1:8000/api/v1/performance_metrics/get_all -H "Content-Type: application/json" -d "{\"distance\": 15.0, \"elevation\": 700, \"total_minutes\": 90}"
+    """
+    try:
+        results = performance_metrics.calculate_all(distance=payload.distance, elevation=payload.elevation, total_minutes=payload.total_minutes, alpha=payload.alpha, c=payload.c, k=payload.k)
+        return GetAllResponse(results=results, message="Calculating all performance metrics successfull")
     except ValueError as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))

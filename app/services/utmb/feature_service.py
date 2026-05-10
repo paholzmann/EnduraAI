@@ -19,6 +19,7 @@ class UTMBFeatureService:
         utmb_df = self.utmb_features.calculate_normalized_features(utmb_df=utmb_df)
         utmb_df = self.utmb_features.calculate_competition_features(utmb_df=utmb_df)
         utmb_df = self.utmb_features.calculate_difficulty_features(utmb_df=utmb_df)
+        utmb_df = self.utmb_features.canonical_race_matching(utmb_df=utmb_df)
         self.file_utilities.save_df_as_csv(df=utmb_df, filepath="data/processed/utmb/utmb-race-data-features.csv")
 
 utmb_df = FileUtils().read_csv_as_df(csv_path="data/processed/utmb/utmb-race-data-processed.csv")

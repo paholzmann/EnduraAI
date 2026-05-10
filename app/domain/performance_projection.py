@@ -12,8 +12,9 @@ class PerformanceProjection:
     def __init__(self):
         self.logger = Logger(name="Performance Projection", level=logging.DEBUG).logger
         self.performance_metrics = Performance_Metrics()
+        self.df_utils = DataFrameUtils()
     
-    def race_placement_projection(self, utmb_df: pd.DataFrame, distance: float, elevation: float, total_time: float) -> float:
+    def race_placement_projection(self, utmb_df: pd.DataFrame, distance: float, elevation: float, total_time: float, top_n: int = 100) -> float:
         """
         including: where could i podium and filtering by distance, country, month, race_category, min. Competitors
         schritte:
@@ -44,6 +45,7 @@ class PerformanceProjection:
             return bisect.bisect_left(results, time) + 1
         
         fitting_races["Possible_Placement"] = fitting_races.apply(calculate_placement, axis=1)
+        fitting_races = fitting_races.sort_values(by="Possible_Placement")
         return fitting_races
 
     def best_race_opportunities(self):
@@ -62,7 +64,7 @@ class PerformanceProjection:
     
     def performance_equivalent_projection(self):
         """
-        input: 15km effort 60min => 15.0, 1.0
+        input: 15km effort 60min => 15.0, 60
         output:
             12km + 300hm in X
             20km + 800hm in Y
@@ -88,3 +90,9 @@ class PerformanceProjection:
 # fitting_races = PerformanceProjection().race_placement_projection(utmb_df=utmb_df, distance=85, elevation=3900, total_time=14.5)
 # res = DataFrameUtils().df_to_dict(df=fitting_races)
 # print(res)
+
+
+# utmb_df = FileUtils().read_csv_as_df(csv_path="data/processed/utmb/utmb-race-data-features.csv")
+# utmb_df = ProcessUTMBData().parse_race_results(utmb_df=utmb_df)
+# fitting_races = PerformanceProjection().race_placement_projection(utmb_df=utmb_df, distance=10, elevation=400, total_time=55)
+# print(fitting_races[["Race_Title", "Date", "Distance", "Elevation_Gain", "N_Results", "Race_Category", "Race_Effort", "Elevation_per_km", "Time_Based_On_Flat_Equivalent", "Possible_Placement"]])

@@ -7,32 +7,45 @@
     <link rel="stylesheet" href="test.css">
 </head>
 <body>
-    <div class="app-layout">
+<section class="card race-opportunities">
+    <div class="table-header">
+        <div>
+            <p class="eyebrow">Performance Projection</p>
+            <h2>Best Race Opportunities</h2>
+            <p>Races where your current performance would likely rank strongest.</p>
+        </div>
 
-        <header class="topbar">
-            <div class="logo">EndurAI</div>
-            <nav class="topnav">
-                <a href="#">Dashboard</a>
-                <a href="#">Settings</a>
-            </nav>
-        </header>
-
-        <aside class="sidebar">
-            <nav class="sidebar-nav">
-                <a href="#">Overview</a>
-                <a href="#">Performance Metrics</a>
-                <a href="#">Performance Projection</a>
-                <a href="#">Recent Activity</a>
-            </nav>
-        </aside>
-
-        <main class="main-content">
-            <section class="page-section">
-                <h1>Dashboard</h1>
-                <p>Hier kommt der wechselbare Inhalt rein.</p>
-            </section>
-        </main>
-
+        <button class="button-secondary">Export</button>
     </div>
+
+    <div class="table-toolbar">
+        <input id="raceSearch" type="search" placeholder="Search races...">
+        <select id="categoryFilter">
+            <option value="all">All categories</option>
+            <option value="50K">50K</option>
+            <option value="100K">100K</option>
+            <option value="100M">100M</option>
+        </select>
+    </div>
+
+    <div class="table-wrapper">
+        <table class="race-table">
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Race</th>
+                    <th>Category</th>
+                    <th>Distance</th>
+                    <th>Elevation</th>
+                    <th>Projected Place</th>
+                    <th>Opportunity</th>
+                    <th>Match</th>
+                </tr>
+            </thead>
+            <tbody id="raceTableBody"></tbody>
+        </table>
+    </div>
+</section>
+    <script src="test.js"></script>
 </body>
 </html>

@@ -3,11 +3,13 @@ import numpy as np
 import heapq
 import logging
 from app.core.logger import Logger
+from app.core.utils.string_utils import StringUtils
 
 
 class UTMBFeatures:
     def __init__(self):
         self.logger = Logger(name="UTMB Features", level=logging.DEBUG).logger
+        self.string_utils = StringUtils()
 
     def calculate_race_effort(self, utmb_df: pd.DataFrame) -> pd.DataFrame:
         """
@@ -103,4 +105,14 @@ class UTMBFeatures:
             utmb_df["Race_Effort"] / utmb_df["Distance"])
         utmb_df["Spread_per_effort"] = (
             utmb_df["Winning_Slowest_Time_Range"] / utmb_df["Race_Effort"])
+        return utmb_df
+
+
+    def canonical_race_matching(self, utmb_df: pd.DataFrame) -> pd.DataFrame:
+        """
+        
+        """
+        self.logger.debug("Clustering same races")
+        utmb_df = self.string_utils.lowercase(df=utmb_df, col="Race_Title")
+        utmb_df = self.string_utils.remove_years(df=utmb_df, col="Race_Title_Processed")
         return utmb_df

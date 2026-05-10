@@ -7,37 +7,6 @@ from app.core.logger import Logger
 class Performance_Metrics:
     def __init__(self):
         self.logger = Logger(name="Performance Metrics", level=logging.DEBUG).logger
-
-    def hours_to_minutes(self, hours: float) -> float:
-        """
-        1.0 = 60
-        1.5 = 90
-        2.0 = 120
-        ...
-        """
-        minutes = hours * 60
-        return minutes
-    
-    def minutes_to_formated_hours(self, minutes: float) -> str:
-        """
-        60 = 1:00h
-        120 = 2:00h
-        160 = 2:40h
-        """
-        hours = int(minutes // 60)
-        remaining_minutes = int(round(minutes % 60))
-        if remaining_minutes == 60:
-            hours += 1
-            remaining_minutes = 0
-        return f"{hours}:{remaining_minutes:02d}h"
-
-    def convert_pace_to_readable_pace(self, minutes: float) -> float:
-        """
-        3.5 = 3:30
-        4.0 = 4:00
-        4.5 = 4:30
-        ...
-        """
     
     def calculate_race_effort(self, distance: float, elevation: float) -> float:
         """
@@ -46,6 +15,14 @@ class Performance_Metrics:
         self.logger.debug(f"Calculating race effort for distance: {distance} and elevation: {elevation}")
         race_effort = distance + (elevation / 100)
         return race_effort
+    
+    def calculate_pace(self, distance: float, total_minutes: float) -> float:
+        """
+
+        """
+        self.logger.debug(f"Calculating pace for distance: {distance} with total minutes: {total_minutes}")
+        pace = total_minutes / distance
+        return pace
 
     def calculate_vertical_rate(self, distance: float, elevation: float) -> float:
         """
@@ -95,11 +72,43 @@ class Performance_Metrics:
         Mountainous
         Extreme Mountain
         """
+        vertical_rate = self.calculate_vertical_rate(distance=distance, elevation=elevation)
+        if vertical_rate < 15:
+            return "Flat"
+        elif vertical_rate >= 15 and vertical_rate < 35:
+            return "Rolling"
+        elif vertical_rate >= 35 and vertical_rate < 55:
+            return "Hilly"
+        elif vertical_rate >= 55 and vertical_rate < 80:
+            return "Mountain"
+        elif vertical_rate >= 80:
+            return "Extreme Mountain"
 
-    def calculate_vertical_per_hour(self, total_hours: float, elevation_gain) -> float:
+    def calculate_vertical_per_hour(self, total_hours: float, elevation_gain: float) -> float:
         """
         elevation_gain / total_hours
         """
         self.logger.debug(f"Calculating total vertical meters per hour with {elevation_gain} total meters in {total_hours} hours")
         vertical_per_hour = elevation_gain / total_hours
         return vertical_per_hour
+    
+    def calculate_all(self, distance: float, elevation: float, total_minutes: float, alpha: float = 0.7, c: float = 80, k: float = 0.05) -> dict:
+        """
+        
+        """
+        race_effort = self.calculate_race_effort(distance=distance, elevation=elevation)
+        pace = self.calculate_pace(distance=distance, total_minutes=total_minutes)
+        vertical_rate = self.calculate_vertical_rate(distance=distance, elevation=elevation)
+        pace_on_flat_equivalent = self.calculate_estimated_pace_on_flat_equivalent(total_time=total_minutes, race_effort=race_effort)
+        race_difficulty_score = self.calculate_race_difficulty_score(distance=distance, elevation=elevation, alpha=alpha, c=c, k=k)
+        race_category = self.calculate_race_category(distance=distance, elevation=elevation)
+        category_label = self.generate_category_label(distance=distance, elevation=elevation)
+        return {
+            "Race_effort": race_effort,
+            "Pace": pace,
+            "Vertical_rate": vertical_rate,
+            "Pace_on_flat_equivalent": pace_on_flat_equivalent,
+            "Race_difficulty_score": race_difficulty_score,
+            "Race_category": race_category,
+            "Category_label": category_label
+        }

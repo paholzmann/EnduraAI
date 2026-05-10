@@ -59,3 +59,15 @@ class CalculateRaceCategoryRequest(BaseModel):
 class CalculateRaceCategoryResponse(BaseModel):
     result: str
     message: str
+
+class GetAllRequest(BaseModel):
+    distance: float = Field(..., description="Distance", example=15.0)
+    elevation: float = Field(..., description="Elevation gain", example=700)
+    total_minutes: float = Field(..., description="Total minutes", example=90)
+    alpha: float = Field(0.7, description="Weight of vertical rate", example=0.7)
+    c: float = Field(80.0, description="Sigmoid center", example=80.0)
+    k: float = Field(0.05, description="Sigmoid steepness", example=0.05)
+
+class GetAllResponse(BaseModel):
+    results: dict
+    message: str

@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EndurAI Race Matching</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Inter, system-ui, sans-serif;
+            background: #0a0a0a;
+            color: rgba(255, 255, 255, 0.94);
+            padding: 32px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.035);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        input,
+        button {
+            height: 42px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.04);
+            color: white;
+            padding: 0 12px;
+            font: inherit;
+        }
+
+        button {
+            cursor: pointer;
+            background: white;
+            color: #0a0a0a;
+            font-weight: 600;
+        }
+
+        button:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            border: 1px solid rgba(255, 255, 255, 0.055);
+            border-radius: 12px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 900px;
+        }
+
+        th,
+        td {
+            padding: 14px 16px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.055);
+            font-size: 14px;
+        }
+
+        th {
+            color: rgba(255, 255, 255, 0.48);
+            font-weight: 500;
+            background: rgba(255, 255, 255, 0.025);
+        }
+
+        td {
+            color: rgba(255, 255, 255, 0.68);
+        }
+
+        tbody tr:hover {
+            background: rgba(255, 255, 255, 0.055);
+        }
+
+        .race-title {
+            color: rgba(255, 255, 255, 0.94);
+            font-weight: 500;
+        }
+
+        .pagination {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .page-info {
+            color: rgba(255, 255, 255, 0.48);
+            font-size: 14px;
+        }
+
+        .status {
+            margin-bottom: 16px;
+            color: rgba(255, 255, 255, 0.48);
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+    <section class="card">
+        <h1>Effort Based Race Matching</h1>
+
+        <div class="form-row">
+            <input id="distanceInput" type="number" placeholder="Distance km" value="17">
+            <input id="elevationInput" type="number" placeholder="Elevation m+" value="700">
+            <button id="searchBtn">Search</button>
+        </div>
+
+        <div id="status" class="status">No data loaded.</div>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Race</th>
+                        <th>Category</th>
+                        <th>Distance</th>
+                        <th>Elevation</th>
+                        <th>Date</th>
+                        <th>Results</th>
+                    </tr>
+                </thead>
+                <tbody id="raceTableBody"></tbody>
+            </table>
+        </div>
+
+        <div class="pagination">
+            <button id="prevPageBtn">Previous</button>
+            <span id="pageInfo" class="page-info">Page 1</span>
+            <button id="nextPageBtn">Next</button>
+        </div>
+    </section>
+
+    <script>
+        const effortBasedRaceMatchingUrl =
+            "http://127.0.0.1:8000/api/v1/performance_projection/effort_based_race_matching";
+
+        const distanceInput = document.querySelector("#distanceInput");
+        const elevationInput = document.querySelector("#elevationInput");
+        const searchBtn = document.querySelector("#searchBtn");
+
+        const raceTableBody = document.querySelector("#raceTableBody");
+        const statusElement = document.querySelector("#status");
+
+        const prevPageBtn = document.querySelector("#prevPageBtn");
+        const nextPageBtn = document.querySelector("#nextPageBtn");
+        const pageInfo = document.querySelector("#pageInfo");
+
+        let currentPage = 1;
+        const pageSize = 50;
+        let hasNextPage = false;
+
+        async function getEffortBasedRaceMatching(page = 1) {
+            const distance = Number(distanceInput.value);
+            const elevation = Number(elevationInput.value);
+
+            const limit = pageSize;
+            const offset = (page - 1) * limit;
+
+            const response = await fetch(effortBasedRaceMatchingUrl, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    distance: distance,
+                    elevation: elevation,
+                    limit: limit,
+                    offset: offset
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error("Request failed");
+            }
+
+            return await response.json();
+        }
+
+        function normalizeResults(apiResponse) {
+            if (Array.isArray(apiResponse)) {
+                return apiResponse;
+            }
+
+            if (Array.isArray(apiResponse.results)) {
+                return apiResponse.results;
+            }
+
+            if (Array.isArray(apiResponse.Effort_based_races)) {
+                return apiResponse.Effort_based_races;
+            }
+
+            return [];
+        }
+
+        function renderRaceTable(races) {
+            if (races.length === 0) {
+                raceTableBody.innerHTML = `
+                    <tr>
+                        <td colspan="7">No races found.</td>
+                    </tr>
+                `;
+                return;
+            }
+
+            const offset = (currentPage - 1) * pageSize;
+
+            raceTableBody.innerHTML = races.map((race, index) => `
+                <tr>
+                    <td>${offset + index + 1}</td>
+                    <td class="race-title">${race["Race Title"] ?? "-"}</td>
+                    <td>${race["Race Category"] ?? "-"}</td>
+                    <td>${race["Distance"] ?? "-"}</td>
+                    <td>${race["Elevation Gain"] ?? "-"}</td>
+                    <td>${race["Date"] ?? "-"}</td>
+                    <td>${race["N Results"] ?? "-"}</td>
+                </tr>
+            `).join("");
+        }
+
+        function renderPagination(races) {
+            hasNextPage = races.length === pageSize;
+
+            pageInfo.textContent = `Page ${currentPage}`;
+
+            prevPageBtn.disabled = currentPage <= 1;
+            nextPageBtn.disabled = !hasNextPage;
+        }
+
+        async function loadRacePage(page = 1) {
+            try {
+                statusElement.textContent = "Loading races...";
+
+                const apiResponse = await getEffortBasedRaceMatching(page);
+                const races = normalizeResults(apiResponse);
+
+                currentPage = page;
+
+                renderRaceTable(races);
+                renderPagination(races);
+
+                statusElement.textContent = `${races.length} races loaded.`;
+
+            } catch (error) {
+                console.error(error);
+                statusElement.textContent = "Failed to load races.";
+            }
+        }
+
+        searchBtn.addEventListener("click", () => {
+            currentPage = 1;
+            loadRacePage(1);
+        });
+
+        prevPageBtn.addEventListener("click", () => {
+            if (currentPage > 1) {
+                loadRacePage(currentPage - 1);
+            }
+        });
+
+        nextPageBtn.addEventListener("click", () => {
+            if (hasNextPage) {
+                loadRacePage(currentPage + 1);
+            }
+        });
+
+        loadRacePage(1);
+    </script>
+</body>
+
+</html>
