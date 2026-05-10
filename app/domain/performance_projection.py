@@ -14,7 +14,7 @@ class PerformanceProjection:
         self.performance_metrics = Performance_Metrics()
         self.df_utils = DataFrameUtils()
     
-    def race_placement_projection(self, utmb_df: pd.DataFrame, distance: float, elevation: float, total_time: float, top_n: int = 100) -> float:
+    def race_placement_projection(self, utmb_df: pd.DataFrame, distance: float, elevation: float, total_time: float) -> float:
         """
         including: where could i podium and filtering by distance, country, month, race_category, min. Competitors
         schritte:

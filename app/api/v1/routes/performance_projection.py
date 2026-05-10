@@ -29,13 +29,13 @@ async def effort_based_race_matching_endpoint(payload: EffortBasedRaceMatchingRe
 @performance_projection_router.post("/race_placement_projection", response_model=RacePlacementProjectionResponse, status_code=status.HTTP_200_OK, summary="Race placement projection")
 async def race_placement_projection_endpoint(payload: RacePlacementProjectionRequest) -> RacePlacementProjectionResponse:
     """
-        curl -X POST http://127.0.0.1:8000/api/v1/performance_projection/race_placement_projection -H "Content-Type: application/json" -d "{\"distance\": 17, \"elevation\": 700, \"total_time\": 90, \"top_n\": 1}"
+        curl -X POST http://127.0.0.1:8000/api/v1/performance_projection/race_placement_projection -H "Content-Type: application/json" -d "{\"distance\": 17, \"elevation\": 700, \"total_time\": 90}"
     """
+    filtered_utmb_df = dataframe_utils.columns_to_keep(df=utmb_df, cols=["Race_Title", "Race_Country", "Date", "Race_Category", "Race_Effort", "Distance", "Elevation_Gain", "Results", "N_Results"])
     try:
-        fitting_races_df = performance_projection.race_placement_projection(utmb_df=utmb_df, distance=payload.distance, elevation=payload.elevation, total_time=payload.total_time, top_n=payload.top_n)
-        filtered_df = dataframe_utils.columns_to_keep(df=fitting_races_df, cols=["Race_Title", "Date", "Distance", "Elevation_Gain", "N_Results", "Race_Category", "Race_Effort", "Elevation_per_km", "Time_Based_On_Flat_Equivalent", "Possible_Placement"])
-        filtered_df = filtered_df.head(payload.top_n)
-        result = dataframe_utils.df_to_dict(df=filtered_df)
+        fitting_races_df = performance_projection.race_placement_projection(utmb_df=filtered_utmb_df, distance=payload.distance, elevation=payload.elevation, total_time=payload.total_time)
+        result = fitting_races_df[payload.offset:payload.offset + payload.limit]
+        result = dataframe_utils.df_to_dict(df=result)
         return RacePlacementProjectionResponse(result=result, message="Race placement projection successfull")
     except ValueError as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
