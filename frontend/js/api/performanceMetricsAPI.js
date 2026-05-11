@@ -26,7 +26,6 @@ export async function getAllPerformanceMetrics(distance, elevation, totalMinutes
 const racePlacementProjectionURL = "http://127.0.0.1:8000/api/v1/performance_projection/race_placement_projection";
 
 export async function getRacePlacementProjection(page = 1, distance, elevation, totalMinutes, limit) {
-
     const offset = (page - 1) * limit;
     try {
         const response = await fetch(racePlacementProjectionURL, {

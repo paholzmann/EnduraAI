@@ -116,7 +116,7 @@ export function performanceMetricsPage () {
             </div>
             <div class="table-toolbar">
                 <input id="race-search" type="search" placeholder="Search...">
-                <select id="category-filter">
+                <select class="category-filter">
                     <option value="all">All</option>
                     <option value="50K">50K</option>
                     <option value="100K">100K</option>
@@ -170,7 +170,6 @@ export function initPerformanceMetricsPage() {
             Number(elevationInput.value),
             Number(totalTimeInput.value)
         );
-        console.log(performanceMetrics);
         const raceEffort = performanceMetrics.results["Race_effort"];
         const pace = convertPaceToReadablePace(performanceMetrics.results["Pace"]);
         const verticalRate = performanceMetrics.results["Vertical_rate"].toFixed(2);

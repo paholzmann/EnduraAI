@@ -1,7 +1,7 @@
 import { overviewPage } from "./pages/overviewPage.js";
 import { initPerformanceMetricsPage, performanceMetricsPage } from "./pages/performanceMetricsPage.js";
 import { performanceProjectionPage } from "./pages/performanceProjectionPage.js";
-import { raceDatabasePage } from "./pages/raceDatabasePage.js";
+import { initRaceDatabasePage, raceDatabasePage } from "./pages/raceDatabasePage.js";
 
 
 const pages = {
@@ -20,6 +20,9 @@ export function initRouter() {
         if (pageName === "PerformanceMetrics") {
             initPerformanceMetricsPage();
         }
+        if (pageName === "RaceDatabase") {
+            initRaceDatabasePage();
+        }
         navLinks.forEach(link => {
             link.classList.remove("active");
             if (link.dataset.page === pageName) {
@@ -34,5 +37,5 @@ export function initRouter() {
         });
     });
 
-    renderPage("PerformanceMetrics");
+    renderPage("RaceDatabase");
 }
