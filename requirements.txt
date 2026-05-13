@@ -4,3 +4,4 @@ matplotlib
 seaborn
 uvicorn
 fastapi
+gpxpy
