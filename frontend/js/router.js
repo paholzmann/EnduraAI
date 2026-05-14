@@ -2,12 +2,14 @@ import { overviewPage } from "./pages/overviewPage.js";
 import { initPerformanceMetricsPage, performanceMetricsPage } from "./pages/performanceMetricsPage.js";
 import { performanceProjectionPage } from "./pages/performanceProjectionPage.js";
 import { initRaceDatabasePage, raceDatabasePage } from "./pages/raceDatabasePage.js";
+import { activityPage } from "./pages/activityPage.js";
 
 
 const pages = {
     Overview: overviewPage,
     PerformanceMetrics: performanceMetricsPage,
     PerformanceProjection: performanceProjectionPage,
+    Activity: activityPage,
     RaceDatabase: raceDatabasePage
 };
 
@@ -37,5 +39,5 @@ export function initRouter() {
         });
     });
 
-    renderPage("RaceDatabase");
+    renderPage("Activity");
 }
