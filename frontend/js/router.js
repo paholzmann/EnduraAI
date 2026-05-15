@@ -2,7 +2,7 @@ import { overviewPage } from "./pages/overviewPage.js";
 import { initPerformanceMetricsPage, performanceMetricsPage } from "./pages/performanceMetricsPage.js";
 import { performanceProjectionPage } from "./pages/performanceProjectionPage.js";
 import { initRaceDatabasePage, raceDatabasePage } from "./pages/raceDatabasePage.js";
-import { activityPage } from "./pages/activityPage.js";
+import { activityPage, initActivityPage } from "./pages/activityPage.js";
 
 
 const pages = {
@@ -24,6 +24,9 @@ export function initRouter() {
         }
         if (pageName === "RaceDatabase") {
             initRaceDatabasePage();
+        }
+        if (pageName === "Activity") {
+            initActivityPage();
         }
         navLinks.forEach(link => {
             link.classList.remove("active");
