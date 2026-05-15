@@ -14,7 +14,7 @@ const pages = {
 };
 
 export function initRouter() {
-    const main = document.querySelector("#app-main");
+    const main = document.querySelector("#app-content");
     const navLinks = document.querySelectorAll(".nav-link");
 
     function renderPage(pageName) {

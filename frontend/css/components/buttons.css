@@ -3,7 +3,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 0;
+    padding: 0 var(--button-padding-x);
     border-radius: var(--button-radius);
     border: 1px solid transparent;
     font: inherit;

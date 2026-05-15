@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPX Route Intelligence</title>
+
+    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+</head>
+
+<body>
+    <section class="gpx-page">
+        <header class="gpx-header">
+            <div class="gpx-header-content">
+                <span class="gpx-eyebrow">GPX Intelligence</span>
+                <h1 class="gpx-title">Route Analyzer</h1>
+                <p class="gpx-description">
+                    Upload a GPX file, visualize the route, and inspect distance, elevation, pace, speed and movement
+                    metrics.
+                </p>
+            </div>
+
+            <div class="gpx-actions">
+                <button class="gpx-button" id="reset-button">Reset</button>
+                <label class="gpx-button gpx-button-primary" for="gpx-file-input">
+                    Upload GPX
+                </label>
+            </div>
+        </header>
+
+        <input type="file" id="gpx-file-input" class="gpx-file-input-hidden" accept=".gpx">
+
+        <section class="gpx-card gpx-hero-card">
+            <div class="gpx-hero-content">
+                <div>
+                    <span class="gpx-eyebrow">Activity Overview</span>
+                    <h2 class="gpx-hero-title" id="activity-name">No activity loaded</h2>
+                    <p class="gpx-hero-text" id="activity-summary">
+                        Select a GPX file to generate route metrics.
+                    </p>
+                </div>
+
+                <div class="gpx-status">
+                    <span class="gpx-status-dot"></span>
+                    <span id="gpx-status-text">Waiting for GPX file</span>
+                </div>
+            </div>
+        </section>
+
+        <div class="gpx-layout">
+            <main class="gpx-main">
+                <section class="gpx-card gpx-map-card">
+                    <div class="gpx-card-header">
+                        <div>
+                            <h2 class="gpx-card-title">Route Map</h2>
+                            <p class="gpx-card-subtitle">Interactive GPS track</p>
+                        </div>
+                    </div>
+
+                    <div id="activity-map"></div>
+                </section>
+
+                <section class="gpx-card">
+                    <div class="gpx-card-header">
+                        <div>
+                            <h2 class="gpx-card-title">Performance Metrics</h2>
+                            <p class="gpx-card-subtitle">Calculated from trackpoints</p>
+                        </div>
+                    </div>
+
+                    <div class="gpx-metrics-grid gpx-metrics-grid-large">
+                        <div class="gpx-metric">
+                            <span class="gpx-metric-label">Distance</span>
+                            <span class="gpx-metric-value" id="distance">--</span>
+                            <span class="gpx-metric-unit">km</span>
+                        </div>
+
+                        <div class="gpx-metric">
+                            <span class="gpx-metric-label">Elevation Gain</span>
+                            <span class="gpx-metric-value" id="elevation-gain">--</span>
+                            <span class="gpx-metric-unit">m+</span>
+                        </div>
+
+                        <div class="gpx-metric">
+                            <span class="gpx-metric-label">Elevation Loss</span>
+                            <span class="gpx-metric-value" id="elevation-loss">--</span>
+                            <span class="gpx-metric-unit">m-</span>
+                        </div>
+
+                        <div class="gpx-metric">
+                            <span class="gpx-metric-label">Duration</span>
+                            <span class="gpx-metric-value" id="duration">--</span>
+                        </div>
+
+                        <div class="gpx-metric">
+                            <span class="gpx-metric-label">Avg Pace</span>
+                            <span class="gpx-metric-value" id="avg-pace">--</span>
+                            <span class="gpx-metric-unit">/km</span>
+                        </div>
+
+                        <div class="gpx-metric">
+                            <span class="gpx-metric-label">Avg Speed</span>
+                            <span class="gpx-metric-value" id="avg-speed">--</span>
+                            <span class="gpx-metric-unit">km/h</span>
+                        </div>
+
+                        <div class="gpx-metric">
+                            <span class="gpx-metric-label">Max Elevation</span>
+                            <span class="gpx-metric-value" id="max-elevation">--</span>
+                            <span class="gpx-metric-unit">m</span>
+                        </div>
+
+                        <div class="gpx-metric">
+                            <span class="gpx-metric-label">Min Elevation</span>
+                            <span class="gpx-metric-value" id="min-elevation">--</span>
+                            <span class="gpx-metric-unit">m</span>
+                        </div>
+
+                        <div class="gpx-metric">
+                            <span class="gpx-metric-label">Vertical Ratio</span>
+                            <span class="gpx-metric-value" id="vertical-ratio">--</span>
+                            <span class="gpx-metric-unit">m/km</span>
+                        </div>
+
+                        <div class="gpx-metric">
+                            <span class="gpx-metric-label">Trackpoints</span>
+                            <span class="gpx-metric-value" id="points">--</span>
+                        </div>
+
+                        <div class="gpx-metric">
+                            <span class="gpx-metric-label">Race Effort</span>
+                            <span class="gpx-metric-value" id="race-effort">--</span>
+                            <span class="gpx-metric-unit">km-e</span>
+                        </div>
+
+                        <div class="gpx-metric">
+                            <span class="gpx-metric-label">Difficulty</span>
+                            <span class="gpx-metric-value" id="difficulty">--</span>
+                        </div>
+                    </div>
+                </section>
+            </main>
+
+            <aside class="gpx-sidebar">
+                <section class="gpx-card">
+                    <div class="gpx-card-header">
+                        <div>
+                            <h2 class="gpx-card-title">Route Details</h2>
+                            <p class="gpx-card-subtitle">Timing and file data</p>
+                        </div>
+                    </div>
+
+                    <div class="gpx-detail-list">
+                        <div class="gpx-detail-row">
+                            <span class="gpx-detail-label">File Name</span>
+                            <span class="gpx-detail-value" id="file-name">--</span>
+                        </div>
+                        <div class="gpx-detail-row">
+                            <span class="gpx-detail-label">Start Time</span>
+                            <span class="gpx-detail-value" id="start-time">--</span>
+                        </div>
+                        <div class="gpx-detail-row">
+                            <span class="gpx-detail-label">End Time</span>
+                            <span class="gpx-detail-value" id="end-time">--</span>
+                        </div>
+                        <div class="gpx-detail-row">
+                            <span class="gpx-detail-label">Start Location</span>
+                            <span class="gpx-detail-value" id="start-location">--</span>
+                        </div>
+                        <div class="gpx-detail-row">
+                            <span class="gpx-detail-label">End Location</span>
+                            <span class="gpx-detail-value" id="end-location">--</span>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="gpx-card">
+                    <div class="gpx-card-header">
+                        <div>
+                            <h2 class="gpx-card-title">Route Profile</h2>
+                            <p class="gpx-card-subtitle">Simple terrain classification</p>
+                        </div>
+                    </div>
+
+                    <div class="gpx-detail-list">
+                        <div class="gpx-detail-row">
+                            <span class="gpx-detail-label">Category</span>
+                            <span class="gpx-detail-value" id="route-category">--</span>
+                        </div>
+                        <div class="gpx-detail-row">
+                            <span class="gpx-detail-label">Climbing Load</span>
+                            <span class="gpx-detail-value" id="climbing-load">--</span>
+                        </div>
+                        <div class="gpx-detail-row">
+                            <span class="gpx-detail-label">Profile Type</span>
+                            <span class="gpx-detail-value" id="profile-type">--</span>
+                        </div>
+                    </div>
+                </section>
+            </aside>
+        </div>
+    </section>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="index.js"></script>
+</body>
+
+</html>
