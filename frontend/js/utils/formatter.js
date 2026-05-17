@@ -18,5 +18,15 @@ export function convertMinutesToReadableHours(minutes) {
         remainingMinutes = 0;
     }
 
-    return `${hours}:${remainingMinutes.toString().padStart(2, "0")}h`;
+    return `${hours}:${remainingMinutes.toString().padStart(2, "0")} h`;
+}
+
+export function roundToTwoDecimals(num) {
+    return num.toFixed(2);
+}
+
+export function metersPerSecondToKmPerHour(meterPerSecond) {
+    const meterPerHour = meterPerSecond * 60 * 60;
+    const kmPerHour = meterPerHour / 1000;
+    return roundToTwoDecimals(kmPerHour);
 }

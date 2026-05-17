@@ -6,3 +6,4 @@ uvicorn
 fastapi
 gpxpy
 python-multipart
+scikit-learn

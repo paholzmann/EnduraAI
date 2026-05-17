@@ -12,6 +12,8 @@ class Performance_Metrics:
         """
         
         """
+        if any(x is None for x in (distance, elevation)):
+            return 0
         self.logger.debug(f"Calculating race effort for distance: {distance} and elevation: {elevation}")
         race_effort = distance + (elevation / 100)
         return race_effort
@@ -20,6 +22,8 @@ class Performance_Metrics:
         """
 
         """
+        if any(x in (None, 0) for x in (distance, total_minutes)):
+            return 0
         self.logger.debug(f"Calculating pace for distance: {distance} with total minutes: {total_minutes}")
         pace = total_minutes / distance
         return pace
@@ -28,6 +32,8 @@ class Performance_Metrics:
         """
         
         """
+        if any(x in (None, 0) for x in (distance, elevation)):
+            return 0
         self.logger.debug(f"Calculating vertical rate for distance {distance} and elevation: {elevation}")
         vertical_rate = elevation / distance
         return vertical_rate
@@ -36,6 +42,8 @@ class Performance_Metrics:
         """
         Estimated pace in minutes
         """
+        if any(x in (None, 0) for x in (total_time, race_effort)):
+            return 0
         self.logger.debug(f"Calculating estimated pace on flat equivalent for race effort {race_effort} with total time {total_time}")
         estimated_pace = total_time / race_effort
         return estimated_pace
@@ -44,6 +52,8 @@ class Performance_Metrics:
         """
         score between 1 - 100
         """
+        if any(x is None for x in (distance, elevation)):
+            return 0
         race_effort = self.calculate_race_effort(distance=distance, elevation=elevation)
         vertical_rate = self.calculate_vertical_rate(distance=distance, elevation=elevation)
         raw_score = race_effort + alpha * vertical_rate
@@ -53,6 +63,8 @@ class Performance_Metrics:
         """
         
         """
+        if any(x is None for x in (distance, elevation)):
+            return 0
         race_effort = self.calculate_race_effort(distance=distance, elevation=elevation)
         if race_effort < 20:
             return f"{race_effort}K"
@@ -72,6 +84,8 @@ class Performance_Metrics:
         Mountainous
         Extreme Mountain
         """
+        if any(x is None for x in (distance, elevation)):
+            return None
         vertical_rate = self.calculate_vertical_rate(distance=distance, elevation=elevation)
         if vertical_rate < 15:
             return "Flat"
@@ -88,6 +102,8 @@ class Performance_Metrics:
         """
         elevation_gain / total_hours
         """
+        if any(x in (None, 0) for x in (total_hours, elevation_gain)):
+            return 0
         self.logger.debug(f"Calculating total vertical meters per hour with {elevation_gain} total meters in {total_hours} hours")
         vertical_per_hour = elevation_gain / total_hours
         return vertical_per_hour
