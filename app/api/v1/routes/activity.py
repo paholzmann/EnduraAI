@@ -3,7 +3,7 @@ import tempfile
 import shutil
 import os
 from app.schemas.activity import *
-from app.gpx.activities.activity import Activity
+from app.domain.gpx.activities.activity import Activity
 
 activity_router = APIRouter(prefix="/api/v1/activity", tags=["Activity"])
 activity = Activity()
