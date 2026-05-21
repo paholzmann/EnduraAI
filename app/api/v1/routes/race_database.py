@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, status
 from app.schemas.race_database import *
 from app.core.utils.file_utils import FileUtils
 from app.core.utils.dataframe_utils import DataFrameUtils
-from app.services.utmb.process import ProcessUTMBData
+from app.ml.data.process import ProcessUTMBData
 
 race_database_router = APIRouter(prefix="/api/v1/race_database", tags=["Race Database"])
 file_utilities = FileUtils()

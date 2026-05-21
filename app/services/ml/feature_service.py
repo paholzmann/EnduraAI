@@ -2,8 +2,8 @@ import pandas as pd
 import logging
 from app.core.logger import Logger
 from app.core.utils.file_utils import FileUtils
-from app.domain.features.utmb_features import UTMBFeatures
-from app.services.utmb.process import ProcessUTMBData
+from app.ml.features.utmb_features import UTMBFeatures
+from app.ml.data.process import ProcessUTMBData
 
 class UTMBFeatureService:
     def __init__(self):
@@ -22,6 +22,7 @@ class UTMBFeatureService:
         utmb_df = self.utmb_features.canonical_race_matching(utmb_df=utmb_df)
         self.file_utilities.save_df_as_csv(df=utmb_df, filepath="data/processed/utmb/utmb-race-data-features.csv")
 
-utmb_df = FileUtils().read_csv_as_df(csv_path="data/processed/utmb/utmb-race-data-processed.csv")
-utmb_df = ProcessUTMBData().parse_race_results(utmb_df=utmb_df)
-UTMBFeatureService().run_utmb_feature_service(utmb_df=utmb_df)
+if __name__ == "__main__":
+    utmb_df = FileUtils().read_csv_as_df(csv_path="data/processed/utmb/utmb-race-data-processed.csv")
+    utmb_df = ProcessUTMBData().parse_race_results(utmb_df=utmb_df)
+    UTMBFeatureService().run_utmb_feature_service(utmb_df=utmb_df)

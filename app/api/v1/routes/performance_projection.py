@@ -3,7 +3,7 @@ from app.domain.performance_projection import PerformanceProjection
 from app.schemas.performance_projection import *
 from app.core.utils.file_utils import FileUtils
 from app.core.utils.dataframe_utils import DataFrameUtils
-from app.services.utmb.process import ProcessUTMBData
+from app.ml.data.process import ProcessUTMBData
 
 performance_projection_router = APIRouter(prefix="/api/v1/performance_projection", tags=["Performance Projection"])
 performance_projection = PerformanceProjection()
