@@ -81,8 +81,8 @@ class RaceMatchingEngine:
 
 
 
-# engine = RaceMatchingEngine()
-# knn = engine.train_pipeline()
-# query = pd.DataFrame({"Distance": [1000], "Elevation_Gain": [40000]})
-# results = engine.recommend_similar_races(query=query, knn=knn)
-# print(results)
+engine = RaceMatchingEngine()
+knn = engine.train_pipeline()
+query = pd.DataFrame({"Distance": [85], "Elevation_Gain": [4000]})
+results = engine.recommend_similar_races(query=query, knn=knn)
+print(results)

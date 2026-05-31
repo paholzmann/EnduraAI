@@ -31,8 +31,22 @@ class RegressionModel:
         return error_df, predicted_columns
     
     def calculate_residuals(self, error_df, predicted_columns: list, targets: list):
-        print(targets)
-        print(predicted_columns)
+        residual_columns = []
         for target_col, predicted_col in zip(targets, predicted_columns):
             error_df[f"Residual_{target_col}"] = error_df[target_col] - error_df[predicted_col]
+            residual_columns.append(f"Residual_{target_col}")
+        return error_df, residual_columns
+    
+    def errors_by_group(self, error_df: pd.DataFrame):
+        error_df["Distance_Bin"] = pd.cut(
+            error_df["Distance"],
+            bins=[0, 25, 50, 100, 200, 500, 1000],
+            labels=["0 - 25 km", "25 - 50 km", "50 - 100 km", "100 - 200 km", "200 km - 500 km", "500 - 1000 km"]
+        )
+        error_df["Elevation_Bin"] = pd.cut(
+            error_df["Elevation_Gain"],
+            bins=[0, 500, 1000, 2000, 4000, 6000, 10000, 20000, 50000],
+            labels=["0 - 500 m+", "500 - 1000 m+", "1000 - 2000 m+", "2000 - 4000 m+", "4000 - 6000 m+", "6000 - 10000 m+", "10000 - 20000 m+", "20000 - 50000 m+"]
+        )
+        
         return error_df

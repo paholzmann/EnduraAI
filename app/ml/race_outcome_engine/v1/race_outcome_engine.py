@@ -31,6 +31,7 @@ class RaceOutcomeEngine:
         self.train_df = self.preprocessing.drop_missing(df=self.utmb_df, columns=check_missing_columns)
 
         self.predicted_columns = []
+        self.residual_columns = []
 
     def train_pipeline(self):
 
@@ -48,14 +49,23 @@ class RaceOutcomeEngine:
         train_preds, test_preds = self.regression_model.get_train_test_prediction(model=model, x_train=x_train, x_test=x_test)
         metrics= self.regression_model.get_basic_metrics(train_preds=train_preds, test_preds=test_preds, y_test=y_test, y_train=y_train)
         error_df, self.predicted_columns = self.regression_model.create_predictions_df(test_preds=test_preds, x_test=x_test, y_test=y_test, targets=self.targets)
-        print(error_df)
-        error_df = self.regression_model.calculate_residuals(error_df=error_df, predicted_columns=self.predicted_columns, targets=self.targets)
-        print(error_df)
+        error_df, self.residual_columns = self.regression_model.calculate_residuals(error_df=error_df, predicted_columns=self.predicted_columns, targets=self.targets)
+        error_df = self.regression_model.errors_by_group(error_df=error_df)
         return metrics, error_df, train_preds, test_preds
+    
+    def get_feature_importance(self, model: RandomForestRegressor):
+        feature_importance = model.feature_importances_
+        return feature_importance
         
-    def visualization(self, df: pd.DataFrame) -> None:
-        for predicted_col, target_col in zip(self.predicted_columns, self.targets):
-            self.plotter.prediction_vs_actual(y_pred=df[predicted_col], y_true=df[target_col])
+    def visualization(self, df: pd.DataFrame, feature_importance: list) -> None:
+        self.plotter.plot_mean_residual_by_group(df=df)
+        self.plotter.plot_feature_importances(self.features, feature_importance)
+        for predicted_col, target_col, residual_col in zip(self.predicted_columns, self.targets, self.residual_columns):
+            self.plotter.prediction_vs_actual(y_pred=df[predicted_col], y_true=df[target_col], title=f"Predicted vs. actual values of {target_col}")
+            self.plotter.plot_residuals_distribution(residuals=df[residual_col], title=f"Residual of {target_col}")
+            self.plotter.plot_residual_vs_prediction(residuals=df[residual_col], y_pred=df[predicted_col], title=f"Residual vs. Predicted {target_col}")
+            for feature in self.features:
+                self.plotter.plot_residual_vs_feature(residuals=df[residual_col], feature=df[feature], title=f"Residual of {target_col} vs. {feature}")
 
 # Next steps:
 # Error analysis
@@ -66,7 +76,10 @@ class RaceOutcomeEngine:
 engine = RaceOutcomeEngine()
 model, x_train, x_test, y_train, y_test = engine.train_pipeline()
 _, error_df, _, _ = engine.evaluate_model(model, x_train, x_test, y_train, y_test)
-engine.visualization(df=error_df)
+engine.get_feature_importance(model=model)
+feature_importance = engine.get_feature_importance(model=model)
+print(error_df)
+engine.visualization(error_df, feature_importance)
 
 
 """

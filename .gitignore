@@ -15,6 +15,9 @@ data/
 # Workflow
 workflow/
 
+# Reports
+reports/
+
 # Distribution / packaging
 .Python
 build/
