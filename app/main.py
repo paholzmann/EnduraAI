@@ -4,6 +4,7 @@ from app.api.v1.routes.performance_metrics import performance_metrics_router
 from app.api.v1.routes.performance_projection import performance_projection_router
 from app.api.v1.routes.race_database import race_database_router
 from app.api.v1.routes.activity import activity_router
+from app.api.v1.routes.ml.race_outcome import race_outcome_router
 
 app = FastAPI(title="UTMB API")
 
@@ -19,3 +20,6 @@ app.include_router(performance_metrics_router)
 app.include_router(performance_projection_router)
 app.include_router(race_database_router)
 app.include_router(activity_router)
+app.include_router(race_outcome_router)
+
+# uvicorn app.main:app - -reload
