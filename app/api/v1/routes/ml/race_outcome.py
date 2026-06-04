@@ -16,7 +16,6 @@ async def race_outcome_endpoint(payload: RaceOutcomePredictionRequest) -> RaceOu
     try:
         input_df = {"Distance": [payload.distance], "Elevation_Gain": [payload.elevation], "Elevation_per_km": [payload.elevation_per_km], "Race_Effort": [payload.race_effort], "Effort_per_km": [payload.effort_per_km], "N_Results": [payload.n_results]}
         input_df = pd.DataFrame(input_df)
-        # print(input_df)
         result = race_outcome_predictor.get_prediction(input_df=input_df)
         return RaceOutcomePredictionResponse(result=result, message="Predicting race outcome successfull")
     except ValueError as e:
