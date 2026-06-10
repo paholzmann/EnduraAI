@@ -7,3 +7,4 @@ fastapi
 gpxpy
 python-multipart
 scikit-learn
+haversine
